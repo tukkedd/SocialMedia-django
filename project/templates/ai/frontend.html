@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Frontend</title>
+    <script>
+        async function sendPrompt(event) {
+            event.preventDefault();
+            const prompt = document.getElementById('prompt').value;
+            const responseDiv = document.getElementById('response');
+
+            try {
+                const response = await fetch('/ai/generate/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ initial_prompt: prompt }),
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    responseDiv.innerText = `Respuesta del modelo: ${data.bot_response}`;
+                } else {
+                    responseDiv.innerText = 'Error al procesar el prompt.';
+                }
+            } catch (error) {
+                responseDiv.innerText = 'Error al conectar con el servidor.';
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Interactúa con el modelo de AI</h1>
+    <form onsubmit="sendPrompt(event)">
+        <label for="prompt">Escribe tu prompt:</label><br>
+        <textarea id="prompt" name="prompt" rows="4" cols="50" required></textarea><br><br>
+        <button type="submit">Enviar</button>
+    </form>
+    <div id="response" style="margin-top: 20px; font-weight: bold;"></div>
+</body>
+</html>
